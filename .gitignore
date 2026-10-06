@@ -1,0 +1,19 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# IDE / tooling
+.idea/
+.claude/settings.local.json
+
+# Scratch files (per global convention)
+COMMIT_MSG.md
+PR.md
+TMP.md
+
+# Generated experiment artifacts (reproducible from the scripts)
+resnet18.pt
+resnet18*.onnx
+resnet18*.onnx.data
+onnxruntime_profile_*.json
