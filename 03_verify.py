@@ -60,8 +60,8 @@ def main() -> None:
     assert logits_pt.shape == logits_ort.shape, (logits_pt.shape, logits_ort.shape)
     max_abs = float(np.max(np.abs(logits_pt - logits_ort)))
     mean_abs = float(np.mean(np.abs(logits_pt - logits_ort)))
-    top1_pt = int(np.argmax(logits_pt))     # predicted class index from PyTorch
-    top1_ort = int(np.argmax(logits_ort))   # predicted class index from ORT
+    top1_pt = int(np.argmax(logits_pt))  # predicted class index from PyTorch
+    top1_ort = int(np.argmax(logits_ort))  # predicted class index from ORT
 
     print(f"output shape : {logits_pt.shape}")
     print(f"max abs diff : {max_abs:.3e}")

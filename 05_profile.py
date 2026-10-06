@@ -41,9 +41,7 @@ def main() -> None:
     # Can be opened in chrome://tracing or parsed as plain JSON; here we parse it to aggregate durations by op type.
     sess_opts = ort.SessionOptions()
     sess_opts.enable_profiling = True
-    session = ort.InferenceSession(
-        MODEL_PATH, sess_opts, providers=["CPUExecutionProvider"]
-    )
+    session = ort.InferenceSession(MODEL_PATH, sess_opts, providers=["CPUExecutionProvider"])
 
     for _ in range(WARMUP):
         session.run(["logits"], {"input": input_np})
@@ -73,14 +71,13 @@ def main() -> None:
 
     print(f"profile file : {profile_path}")
     print(f"iters        : {ITERS} (plus {WARMUP} warmup)")
-    print(f"total op time: {total_runs_us / 1000:.1f} ms "
-          f"(summed over all iters)")
+    print(f"total op time: {total_runs_us / 1000:.1f} ms (summed over all iters)")
     print()
     print(f"{'op':20} {'count':>8} {'total ms':>10} {'avg us':>10} {'%':>6}")
     for op, total in sorted(totals_us.items(), key=lambda kv: -kv[1]):
         n = counts[op]
         pct = 100 * total / total_runs_us
-        print(f"{op:20} {n:>8} {total/1000:>10.2f} {total/n:>10.1f} {pct:>5.1f}%")
+        print(f"{op:20} {n:>8} {total / 1000:>10.2f} {total / n:>10.1f} {pct:>5.1f}%")
 
     # Clean up the profile file so repeated runs don't pile up.
     os.remove(profile_path)

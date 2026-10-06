@@ -68,10 +68,7 @@ def main() -> None:
 
     # Pretty-print an input/output shape as a list, keeping symbolic names like "batch".
     def shape_of(value_info) -> list:
-        return [
-            d.dim_param if d.HasField("dim_param") else d.dim_value
-            for d in value_info.type.tensor_type.shape.dim
-        ]
+        return [d.dim_param if d.HasField("dim_param") else d.dim_value for d in value_info.type.tensor_type.shape.dim]
 
     # Count how many nodes of each op type the exported graph has (gives a feel for the model).
     size_kb = os.path.getsize(MODEL_PATH) / 1024

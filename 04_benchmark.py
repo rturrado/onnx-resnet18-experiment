@@ -28,8 +28,8 @@ from torchvision import models
 MODEL_PATH = "resnet18.onnx"
 WEIGHTS_PATH = "resnet18.pt"
 INPUT_SHAPE = (1, 3, 224, 224)
-WARMUP = 20     # untimed iterations: let allocators, thread pools, kernels settle
-ITERS = 200     # timed iterations
+WARMUP = 20  # untimed iterations: let allocators, thread pools, kernels settle
+ITERS = 200  # timed iterations
 
 
 def bench_pytorch(input_torch: torch.Tensor) -> list[int]:
@@ -88,7 +88,7 @@ def main() -> None:
 
     print(f"warmup={WARMUP}  iters={ITERS}")
     print(f"torch threads = {torch.get_num_threads()}")
-    print(f"ort default intra-op threads = (library default, uses all CPU cores)")
+    print("ort default intra-op threads = (library default, uses all CPU cores)")
     print()
 
     pt_stats = summarize("pytorch", bench_pytorch(input_torch))

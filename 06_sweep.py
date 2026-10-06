@@ -27,12 +27,12 @@ What this script produces:
 
 import json
 import os
+import time
 from collections import defaultdict
 
 import numpy as np
 import onnx
 import onnxruntime as ort
-import time
 import torch
 from torchvision import models
 
@@ -113,9 +113,7 @@ def bench(model_path: str, opt_level, threads: int) -> dict:
     # How many CPU threads a single session.run call may use
     # (e.g. to parallelize matmul rows inside one Conv). 0 means "pick a default".
     sess_opts.intra_op_num_threads = threads
-    session = ort.InferenceSession(
-        model_path, sess_opts, providers=["CPUExecutionProvider"]
-    )
+    session = ort.InferenceSession(model_path, sess_opts, providers=["CPUExecutionProvider"])
 
     for _ in range(WARMUP):
         session.run(["logits"], {"input": input_np})
