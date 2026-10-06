@@ -5,10 +5,15 @@ Six scripts, roughly two hours of work.
 
 ## Setup
 
+Dependencies are declared in `pyproject.toml` and pinned in `uv.lock`.
+With [uv](https://docs.astral.sh/uv/) installed:
+
 ```
-python3 -m venv .venv
-.venv/bin/pip install -r requirements.txt
+uv sync
 ```
+
+That creates a `.venv/` and installs the full locked set.
+Then run any script with `uv run python 02_export.py` (or activate the venv).
 
 Everything runs on CPU. No GPU required.
 
