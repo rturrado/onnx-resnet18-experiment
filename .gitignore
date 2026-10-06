@@ -7,10 +7,11 @@ __pycache__/
 .idea/
 .claude/settings.local.json
 
-# Scratch files (per global convention)
+# Scratch / internal planning files
 COMMIT_MSG.md
 PR.md
 TMP.md
+TODO.md
 
 # Generated experiment artifacts (reproducible from the scripts)
 resnet18.pt
