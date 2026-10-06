@@ -48,7 +48,7 @@ def main() -> None:
     #   opset_version:        ONNX spec version to target; must be supported by the receiving runtime.
     torch.onnx.export(
         model,
-        dummy_input,
+        (dummy_input,),
         MODEL_PATH,
         input_names=["input"],
         output_names=["logits"],

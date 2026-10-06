@@ -77,7 +77,7 @@ def from_torch_to_raw_onnx() -> None:
     dummy_input = torch.randn(*INPUT_SHAPE)  # same convention as 02_export.py
     torch.onnx.export(
         model,
-        dummy_input,
+        (dummy_input,),
         RAW_MODEL_PATH,
         input_names=["input"],
         output_names=["logits"],
