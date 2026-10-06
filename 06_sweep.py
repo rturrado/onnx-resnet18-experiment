@@ -83,14 +83,21 @@ def from_torch_to_raw_onnx() -> None:
         output_names=["logits"],
         dynamic_axes={"input": {0: "batch"}, "logits": {0: "batch"}},
         opset_version=OPSET,
-        optimize=False, # <-- the key difference vs step 2
+        # optimize=False disables the dynamo exporter's post-trace graph-cleanup pass.
+        # Without this flag, BatchNorm would be folded into Conv and never appear as a node.
+        optimize=False,
     )
 
 
 def from_onnx_to_opt_onnx(model_path: str, out_path: str) -> None:
     """Serialize ORT's internal post-optimization graph (fusions + layout transforms) to out_path."""
     sess_opts = ort.SessionOptions()
+    # How aggressively ORT rewrites the graph at session load.
+    # ORT_ENABLE_ALL enables operator fusion, constant folding, and provider-specific layout transforms
+    # (e.g. NCHWc for CPU with AVX kernels).
     sess_opts.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
+    # Path where ORT dumps the post-optimization graph as ONNX.
+    # Set once; the dump happens as a side effect of session construction.
     sess_opts.optimized_model_filepath = out_path
     # Constructing the session triggers optimization and the dump; no run needed.
     ort.InferenceSession(model_path, sess_opts, providers=["CPUExecutionProvider"])
@@ -103,6 +110,8 @@ def bench(model_path: str, opt_level, threads: int) -> dict:
 
     sess_opts = ort.SessionOptions()
     sess_opts.graph_optimization_level = opt_level
+    # How many CPU threads a single session.run call may use
+    # (e.g. to parallelize matmul rows inside one Conv). 0 means "pick a default".
     sess_opts.intra_op_num_threads = threads
     session = ort.InferenceSession(
         model_path, sess_opts, providers=["CPUExecutionProvider"]

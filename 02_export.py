@@ -41,8 +41,11 @@ def main() -> None:
     # Values do not matter; only shape and dtype do.
     dummy_input = torch.randn(*INPUT_SHAPE)
 
-    # Trace the model and write out (graph + weights) as an ONNX file.
-    # dynamic_axes marks axis 0 of input/output as "any size at runtime" (batch dimension).
+    # Trace the model with dummy_input and write (graph + weights) as an ONNX file.
+    #   {input,output}_names: symbolic names used when later feeding the model via ORT.
+    #   dynamic_axes:         axes whose size is not fixed at export time;
+    #                         here axis 0 (batch) accepts any value at runtime.
+    #   opset_version:        ONNX spec version to target; must be supported by the receiving runtime.
     torch.onnx.export(
         model,
         dummy_input,
@@ -56,10 +59,11 @@ def main() -> None:
         opset_version=OPSET,
     )
 
-    # Load the file back as a Python object (protobuf tree) for inspection.
+    # Load the file into an in-memory protobuf tree (not runnable, just inspectable).
     onnx_model = onnx.load(MODEL_PATH)
 
-    # Validate graph structure against the ONNX spec. Raises on malformed files; does not run the model.
+    # Validate the graph structure against the ONNX spec (op names, shapes, types, DAG).
+    # Raises on malformed files; does not run the model.
     onnx.checker.check_model(onnx_model)
 
     # Pretty-print an input/output shape as a list, keeping symbolic names like "batch".

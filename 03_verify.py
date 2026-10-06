@@ -45,11 +45,15 @@ def main() -> None:
     with torch.no_grad():
         logits_pt = pytorch_model(input_torch).numpy()
 
-    # Create an ORT session: loads the ONNX file and prepares it for execution on CPU.
+    # Create an ORT session: loads the ONNX file and prepares it for execution on CPU (applies graph optimizations,
+    # picks a kernel per node).
+    # Expensive setup, paid once per session. providers lists the backends ORT may dispatch to;
+    # CPUExecutionProvider forces every node to run on CPU for a reproducible comparison.
     session = ort.InferenceSession(MODEL_PATH, providers=["CPUExecutionProvider"])
 
-    # Run ORT inference. Inputs are a dict keyed by the ONNX input names declared in step 2.
-    # session.run returns a list (one array per requested output); unpack the single element.
+    # Run ORT inference.
+    # Inputs are a dict keyed by the ONNX input names declared at export time (step 2: "input").
+    # Returns a list with one ndarray per requested output; unpack the single element.
     (logits_ort,) = session.run(["logits"], {"input": input_np})
 
     # Compare the two outputs numerically and semantically.

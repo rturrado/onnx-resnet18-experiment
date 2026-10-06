@@ -36,7 +36,9 @@ def main() -> None:
     rng = np.random.default_rng(0)
     input_np = rng.standard_normal(INPUT_SHAPE).astype(np.float32)
 
-    # Enable profiling: ORT writes a Chrome-trace-format JSON of every op call.
+    # Enable profiling: when true, ORT emits one trace event per op invocation to a JSON file in cwd using the Chrome
+    # tracing schema.
+    # Can be opened in chrome://tracing or parsed as plain JSON; here we parse it to aggregate durations by op type.
     sess_opts = ort.SessionOptions()
     sess_opts.enable_profiling = True
     session = ort.InferenceSession(
